@@ -20,6 +20,10 @@ class VlcPlayer extends AbstractPlayer {
         return !!this._process;
     }
 
+    get playerName() {
+        return 'cvlc';
+    }
+
     get _vlcVolume() {
         return this._volume / 100 * 2;
     }

@@ -20,6 +20,10 @@ class MPlayer extends AbstractPlayer {
         return !!this._process;
     }
 
+    get playerName() {
+        return 'mplayer';
+    }
+
     get _mplayerVolume() {
         return this._volume;
     }

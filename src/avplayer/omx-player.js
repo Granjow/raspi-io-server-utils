@@ -20,14 +20,22 @@ class OmxPlayer extends AbstractPlayer {
         return !!this._process;
     }
 
+    get playerName() {
+        return 'omxplayer';
+    }
+
     get _omxVolume() {
         return Math.round( this._volume / 100 * 5000 - 5000 );
+    }
+
+    get videoArgs() {
+        return this.isVideo ? '-b' : '';
     }
 
     _start() {
         this._process = childProcess.spawn(
             'omxplayer',
-            `-b --no-osd --no-keys --vol ${this._omxVolume} ${this._file}`.split( ' ' )
+            [ this.videoArgs, `-no-osd --no-keys --vol ${this._omxVolume} ${this._file}` ].join( ' ' ).split( ' ' )
         );
 
         this._process.stderr.on( 'data', data => {

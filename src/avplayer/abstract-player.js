@@ -30,7 +30,9 @@ class AbstractPlayer extends EventEmitter {
     get status() {
         return {
             running: this.running,
-            playedSeconds: this.playTimeSeconds
+            playedSeconds: this.playTimeSeconds,
+            volume: this._volume,
+            playerName: this.playerName,
         };
     }
 
@@ -49,8 +51,23 @@ class AbstractPlayer extends EventEmitter {
         return Math.round( this.playTime / 100 ) / 10;
     }
 
+    get playerName() {
+        throw new Error( 'Not implemented!' );
+    }
+
     get running() {
         throw new Error( 'Not implemented!' );
+    }
+
+    /**
+     * @returns {number}
+     */
+    get volume() {
+        return this._volume;
+    }
+
+    get isVideo() {
+        return /(mp3|wav)$/i.test( this._file );
     }
 
     _started() {
