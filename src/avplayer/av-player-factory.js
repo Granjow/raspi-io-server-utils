@@ -15,7 +15,7 @@ class AVPlayerFactory extends EventEmitter {
     /**
      * Initialise the factory; test which players are available.
      *
-     * @param {string[]} preferredOrder See #preferredOrder
+     * @param {string[]=} preferredOrder See #preferredOrder
      * @returns {Promise.<void>}
      */
     init( preferredOrder ) {
@@ -60,6 +60,7 @@ class AVPlayerFactory extends EventEmitter {
      * @param {string[]} order
      */
     set preferredOrder( order ) {
+        if ( !(order instanceof Array) ) return;
         const preferredOrder = order.map( name => {
             switch ( name ) {
                 case 'mplayer':
