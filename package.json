@@ -9,7 +9,6 @@
   "author": "Simon A. Eugster",
   "license": "MIT",
   "dependencies": {
-    "jsonfile": "^4.0.0",
     "rpio": "^0.9.19"
   }
 }
