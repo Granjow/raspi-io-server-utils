@@ -4,7 +4,7 @@
   "description": "Utilities for interacting with Raspberry IOs and Raspbian",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jasmine"
   },
   "homepage": "https://github.com/Granjow/raspi-io-server-utils",
   "repository": {
@@ -17,6 +17,12 @@
   "author": "Simon A. Eugster",
   "license": "MIT",
   "dependencies": {
+    "check-types": "^7.3.0",
     "rpio": "^0.9.19"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^2.6.2",
+    "jasmine": "^2.8.0",
+    "jasmine-core": "^2.8.0"
   }
 }
