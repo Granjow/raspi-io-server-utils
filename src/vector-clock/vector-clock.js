@@ -14,7 +14,7 @@ class VectorClock {
         if ( check.string( data ) ) {
             ownId = data;
         } else {
-            if ( check.not.object( data ) ) throw new Error( 'Must pass either an ID (string) or a object to construct a vector clock' );
+            if ( check.not.object( data ) ) throw new Error( 'Must pass either an ID (string) or an object to construct a vector clock' );
             if ( check.not.string( data.owner ) ) throw new Error( 'owner is required when constructing from object' );
             if ( check.not.array( data.time ) ) throw new Error( 'time vector is required when constructing from object' );
 
@@ -110,7 +110,7 @@ class VectorClock {
 
     toString() {
         const times = [ `{Vector Clock for ${this._ownId}}` ];
-        this._vectorClock.forEach( ( v, k ) => times.push( `${v} : ${k}${k === this._ownId ? ' (self)' : ''}` ) );
+        this._clock.forEach( ( v, k ) => times.push( `${v} : ${k}${k === this._ownId ? ' (self)' : ''}` ) );
         return times.join( '\n' );
     }
 

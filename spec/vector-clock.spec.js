@@ -78,3 +78,10 @@ describe( 'Time comparison', () => {
         expect( b.newerThan( a ) ).toBe( true, 'b knows about a and c and happened afterwards' );
     } );
 } );
+
+describe( 'Stringify', () => {
+    it( 'works for an empty clock', () => {
+        const a = new VectorClock( 'a' );
+        expect( () => a.toString() ).not.toThrow();
+    } );
+} );
