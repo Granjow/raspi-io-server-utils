@@ -76,6 +76,14 @@ class VectorClock {
     }
 
     /**
+     * @param {VectorClock} otherClock
+     * @returns {boolean} true, if this clock holds information about the owner of another clock.
+     */
+    knowsOwnerOf( otherClock ) {
+        return this._clock.has( otherClock.id );
+    }
+
+    /**
      * Only checks the timestamp of this clock's owner, ignores all other timestamps
      * @param {VectorClock} other
      */
@@ -122,7 +130,6 @@ class VectorClock {
         const currentTime = this._clock.get( id ) || 0;
         this._clock.set( id, Math.max( currentTime, time ) );
     }
-
 }
 
 module.exports = VectorClock;

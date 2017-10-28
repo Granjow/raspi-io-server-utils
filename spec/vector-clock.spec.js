@@ -85,3 +85,25 @@ describe( 'Stringify', () => {
         expect( () => a.toString() ).not.toThrow();
     } );
 } );
+
+describe( 'Owners of other clocks', () => {
+    it( 'is unknown before syncing', () => {
+        const a = new VectorClock( 'a' );
+        const b = new VectorClock( 'b' );
+
+        expect( a.knowsOwnerOf( b ) ).toBe( false );
+        expect( b.knowsOwnerOf( a ) ).toBe( false );
+    } );
+    it( 'is known after syncing', () => {
+        const a = new VectorClock( 'a' );
+        const b = new VectorClock( 'b' );
+
+        a.syncFrom( b );
+
+        expect( a.knowsOwnerOf( b ) ).toBe( true );
+        expect( b.knowsOwnerOf( a ) ).toBe( false );
+
+        b.syncFrom( a );
+        expect( b.knowsOwnerOf( a ) ).toBe( true );
+    } );
+} );
