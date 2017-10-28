@@ -41,6 +41,13 @@ class VectorClock {
     }
 
     /**
+     * @param {number} time
+     */
+    set time( time ) {
+        return this._clock.set( this._ownId, time );
+    }
+
+    /**
      * @returns {{id:string, time: number}[]}
      */
     get timestamps() {
@@ -94,15 +101,21 @@ class VectorClock {
     /**
      * Integrate vector time of other into own time (update timestamps of all clients)
      * @param {VectorClock} other
+     * @param {boolean=} canUpdateMyTime Set to true if other clocks can update the time of this clock.
+     * This is useful e.g. if the owner of this clock could go offline and lose the current time, so it is recovered.
      */
-    syncFrom( other ) {
+    syncFrom( other, canUpdateMyTime ) {
         const errors = [];
         other.timestamps.forEach( time => {
             if ( time.id !== this._ownId ) {
                 this.updateOther( time.id, time.time );
             } else {
                 if ( time.time > this.time ) {
-                    errors.push( 'Client thinks my time is newer' );
+                    if ( canUpdateMyTime ) {
+                        this.time = time.time;
+                    } else {
+                        errors.push( 'Client thinks my time is newer' );
+                    }
                 }
             }
         } );

@@ -17,11 +17,16 @@ describe( 'Vector clock', () => {
 } );
 
 describe( 'Synchronisation', () => {
-    it( 'uses newest timestamps', () => {
-        const a = new VectorClock( 'a' );
-        const b = new VectorClock( 'b' );
-        const c = new VectorClock( 'c' );
 
+    let a, b, c;
+
+    beforeEach( () => {
+        a = new VectorClock( 'a' );
+        b = new VectorClock( 'b' );
+        c = new VectorClock( 'c' );
+    } );
+
+    it( 'uses newest timestamps', () => {
         a.nextTick().nextTick().nextTick();
         b.nextTick().nextTick();
         c.nextTick();
@@ -31,6 +36,24 @@ describe( 'Synchronisation', () => {
         expect( a.time ).toBe( 3 );
         expect( a.timeOf( 'b' ) ).toBe( 2 );
         expect( a.timeOf( 'c' ) ).toBe( 1 );
+    } );
+
+    it( 'throws error when client thinks owner is newer', () => {
+        a.syncFrom( b );
+        b.syncFrom( a );
+
+        b.updateOther( 'a', 2 );
+
+        expect( () => a.syncFrom( b ) ).toThrow();
+    } );
+    it( 'can recover own time when syncing', () => {
+        a.syncFrom( b );
+        b.syncFrom( a );
+
+        b.updateOther( 'a', 2 );
+
+        expect( () => a.syncFrom( b, true ) ).not.toThrow();
+        expect( a.time ).toBe( 2 );
     } );
 } );
 
