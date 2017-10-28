@@ -152,7 +152,7 @@ class VectorClock extends EventEmitter {
 
     toString() {
         const times = [ `{Vector Clock for ${this._ownId}}` ];
-        this._clock.forEach( ( v, k ) => times.push( `${v} : ${k}${k === this._ownId ? ' (self)' : ''}` ) );
+        this._clock.forEach( ( v, k ) => times.push( `  ${v} : ${k}${k === this._ownId ? ' (self)' : ''}` ) );
         return times.join( '\n' );
     }
 
