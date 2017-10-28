@@ -16,6 +16,12 @@
   },
   "author": "Simon A. Eugster",
   "license": "MIT",
+  "keywords": [
+    "raspberry",
+    "vector clock",
+    "video",
+    "gpio"
+  ],
   "dependencies": {
     "check-types": "^7.3.0",
     "rpio": "^0.9.19"
