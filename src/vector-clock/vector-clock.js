@@ -1,11 +1,13 @@
+const EventEmitter = require( 'events' );
 const check = require( 'check-types' );
 
-class VectorClock {
+class VectorClock extends EventEmitter {
 
     /**
      * @param {string|{owner: string, time: Array}} data
      */
     constructor( data ) {
+        super();
 
         /** @type {Map.<string,number>} */
         this._clock = new Map();
@@ -36,6 +38,9 @@ class VectorClock {
         return this._ownId;
     }
 
+    /**
+     * @returns {number}
+     */
     get time() {
         return this._clock.get( this._ownId );
     }
@@ -113,6 +118,7 @@ class VectorClock {
                 if ( time.time > this.time ) {
                     if ( canUpdateMyTime ) {
                         this.time = time.time;
+                        this._ownClockUpdated();
                     } else {
                         errors.push( 'Client thinks my time is newer' );
                     }
@@ -142,6 +148,10 @@ class VectorClock {
 
         const currentTime = this._clock.get( id ) || 0;
         this._clock.set( id, Math.max( currentTime, time ) );
+    }
+
+    _ownClockUpdated() {
+        setImmediate( () => this.emit( 'time' ) );
     }
 }
 

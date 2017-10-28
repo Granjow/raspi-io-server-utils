@@ -46,15 +46,20 @@ describe( 'Synchronisation', () => {
 
         expect( () => a.syncFrom( b ) ).toThrow();
     } );
-    it( 'can recover own time when syncing', () => {
+    it( 'can recover own time when syncing', ( done ) => {
         a.syncFrom( b );
         b.syncFrom( a );
 
         b.updateOther( 'a', 2 );
 
+        a.on( 'time', () => {
+            expect( a.time ).toBe( 2 );
+            done();
+        } );
+
         expect( () => a.syncFrom( b, true ) ).not.toThrow();
         expect( a.time ).toBe( 2 );
-    } );
+    }, 100 );
 } );
 
 describe( 'Time comparison', () => {
