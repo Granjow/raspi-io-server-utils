@@ -1,6 +1,13 @@
 const EventEmitter = require( 'events' );
 const check = require( 'check-types' );
 
+/**
+ * Simple implementation of a vector clock.
+ *
+ * Events:
+ * - `new-time` when the time of any member changed
+ * - `time` when the time of the owner was changed by a client (may be renamed in future)
+ */
 class VectorClock extends EventEmitter {
 
     /**
@@ -70,6 +77,7 @@ class VectorClock extends EventEmitter {
 
     nextTick() {
         this._clock.set( this._ownId, this._clock.get( this._ownId ) + 1 );
+        this._newTime();
         return this;
     }
 
@@ -110,14 +118,18 @@ class VectorClock extends EventEmitter {
      * This is useful e.g. if the owner of this clock could go offline and lose the current time, so it is recovered.
      */
     syncFrom( other, canUpdateMyTime ) {
+        let changes = 0;
         const errors = [];
+
         other.timestamps.forEach( time => {
             if ( time.id !== this._ownId ) {
-                this.updateOther( time.id, time.time );
+                let changed = this.updateOther( time.id, time.time );
+                if (changed) changes++;
             } else {
                 if ( time.time > this.time ) {
                     if ( canUpdateMyTime ) {
                         this.time = time.time;
+                        changes++;
                         this._ownClockUpdated();
                     } else {
                         errors.push( 'Client thinks my time is newer' );
@@ -127,6 +139,9 @@ class VectorClock extends EventEmitter {
         } );
         if ( errors.length > 0 ) {
             throw new Error( errors.join( ',' ) );
+        }
+        if (changes) {
+            this._newTime();
         }
         return this;
     }
@@ -147,11 +162,19 @@ class VectorClock extends EventEmitter {
         if ( check.not.greaterOrEqual( time, 0 ) ) throw new Error( `Time for client ${id} must be a number > 0` );
 
         const currentTime = this._clock.get( id ) || 0;
+        const changed = currentTime !== time;
+
         this._clock.set( id, Math.max( currentTime, time ) );
+
+        return changed;
     }
 
     _ownClockUpdated() {
         setImmediate( () => this.emit( 'time' ) );
+    }
+
+    _newTime() {
+        setImmediate( () => this.emit( 'new-time' ) );
     }
 }
 

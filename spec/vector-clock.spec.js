@@ -16,6 +16,33 @@ describe( 'Vector clock', () => {
     } );
 } );
 
+describe( 'Events', () => {
+
+    let a, b, c;
+
+    beforeEach( () => {
+        a = new VectorClock( 'a' );
+        b = new VectorClock( 'b' );
+        c = new VectorClock( 'c' );
+    } );
+
+    it( 'fires on tick', ( done ) => {
+        a.on( 'new-time', () => {
+            done();
+        } );
+        a.nextTick();
+    }, 100 );
+
+    it( 'fires on sync', ( done ) => {
+        a.on( 'new-time', () => {
+            done();
+        } );
+        b.nextTick();
+        a.syncFrom( b );
+    }, 100 );
+
+} );
+
 describe( 'Synchronisation', () => {
 
     let a, b, c;
