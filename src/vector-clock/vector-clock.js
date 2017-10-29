@@ -70,8 +70,8 @@ class VectorClock extends EventEmitter {
 
     get json() {
         return {
+            owner: this._ownId,
             time: this.timestamps,
-            owner: this._ownId
         };
     }
 
@@ -124,7 +124,7 @@ class VectorClock extends EventEmitter {
         other.timestamps.forEach( time => {
             if ( time.id !== this._ownId ) {
                 let changed = this.updateOther( time.id, time.time );
-                if (changed) changes++;
+                if ( changed ) changes++;
             } else {
                 if ( time.time > this.time ) {
                     if ( canUpdateMyTime ) {
@@ -140,7 +140,7 @@ class VectorClock extends EventEmitter {
         if ( errors.length > 0 ) {
             throw new Error( errors.join( ',' ) );
         }
-        if (changes) {
+        if ( changes ) {
             this._newTime();
         }
         return this;
