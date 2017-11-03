@@ -1,6 +1,12 @@
 const EventEmitter = require( 'events' );
 const rpio = require( 'rpio' );
 
+/**
+ * Digital input which listens to rising edges.
+ * Keeps the state until reset.
+ *
+ * @type {DigitalInput}
+ */
 module.exports = class DigitalInput extends EventEmitter {
 
     constructor( pin ) {
@@ -16,10 +22,6 @@ module.exports = class DigitalInput extends EventEmitter {
         rpio.poll( pin, () => this._stateChanged(), rpio.POLL_BOTH );
     }
 
-    reset() {
-        this._tEnabled = -1;
-    }
-
     get pin() {
         return this._pin;
     }
@@ -32,12 +34,20 @@ module.exports = class DigitalInput extends EventEmitter {
         };
     }
 
+    reset() {
+        this._tEnabled = -1;
+    }
+
+    setActivated() {
+        this._tEnabled = Date.now();
+        this._currentStatus = true;
+        setImmediate( () => this.emit( 'enable' ) );
+    }
+
     _stateChanged() {
         const status = rpio.read( this._pin );
         if ( status === rpio.HIGH ) {
-            this._tEnabled = Date.now();
-            this._currentStatus = true;
-            setImmediate( () => this.emit( 'enable' ) );
+            this.setActivated();
         } else {
             this._currentStatus = false;
         }

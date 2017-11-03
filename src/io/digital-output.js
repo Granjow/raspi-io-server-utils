@@ -1,7 +1,12 @@
 const EventEmitter = require( 'events' );
 const rpio = require( 'rpio' );
 
-class DigitalOutput extends EventEmitter {
+/**
+ * Digital output, keeps track of the state.
+ *
+ * @type {DigitalOutput}
+ */
+module.exports = class DigitalOutput extends EventEmitter {
 
     constructor( pin ) {
         super();
@@ -28,6 +33,4 @@ class DigitalOutput extends EventEmitter {
         rpio.write( this._pin, enabled ? rpio.HIGH : rpio.LOW );
     }
 
-}
-
-module.exports = DigitalOutput;
+};
