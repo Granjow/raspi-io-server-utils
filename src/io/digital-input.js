@@ -29,9 +29,23 @@ module.exports = class DigitalInput extends EventEmitter {
     get status() {
         return {
             pin: this.pin,
-            status: this._currentStatus,
-            tEnabled: this._tEnabled
+            status: this.currentStatus,
+            tEnabled: this.tEnabled,
         };
+    }
+
+    /**
+     * @returns {number} Timestamp when the input was activated the last time
+     */
+    get tEnabled() {
+        return this._tEnabled;
+    }
+
+    /**
+     * @returns {boolean} true, if the input is currently HIGH
+     */
+    get currentStatus() {
+        return this._currentStatus;
     }
 
     reset() {
@@ -40,13 +54,13 @@ module.exports = class DigitalInput extends EventEmitter {
 
     setActivated() {
         this._tEnabled = Date.now();
-        this._currentStatus = true;
         setImmediate( () => this.emit( 'enable' ) );
     }
 
     _stateChanged() {
         const status = rpio.read( this._pin );
         if ( status === rpio.HIGH ) {
+            this._currentStatus = true;
             this.setActivated();
         } else {
             this._currentStatus = false;
