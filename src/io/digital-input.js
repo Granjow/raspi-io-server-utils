@@ -9,6 +9,9 @@ const rpio = require( 'rpio' );
  */
 module.exports = class DigitalInput extends EventEmitter {
 
+    /**
+     * @param {number} pin Physical pin to read
+     */
     constructor( pin ) {
         super();
 
@@ -20,6 +23,9 @@ module.exports = class DigitalInput extends EventEmitter {
 
         rpio.open( pin, rpio.INPUT, rpio.PULL_DOWN );
         rpio.poll( pin, () => this._stateChanged(), rpio.POLL_BOTH );
+
+        // Read initial status
+        this._stateChanged();
     }
 
     get pin() {
