@@ -1,34 +1,34 @@
+const EventEmitter = require( 'events' );
 const PlayerFactory = require( './av-player-factory' );
 
-class AvPlayer {
+/**
+ * @type {AVPlayer}
+ */
+class AvPlayer extends EventEmitter {
 
     /**
-     * @param {string[]} preferredPlayers
+     * @param {string[]=} preferredPlayers
      */
     constructor( preferredPlayers ) {
+        super();
+
         this._factory = new PlayerFactory();
-        this._factory.init( preferredPlayers );
+        this._factory.init( preferredPlayers ).then( () => this.emit( 'ready' ) );
 
         this._volume = 50;
+        this._loop = false;
         this._activePlayer = undefined;
-
+        this._file = undefined;
     }
 
     stop() {
-        return new Promise( ( resolve ) => {
-            if ( this._activePlayer && this._activePlayer.running ) {
-                this._activePlayer.once( 'stop', () => {
-                    resolve();
-                } );
-                this._activePlayer.stop()
-            } else {
-                resolve();
-            }
-        } );
+        this.loop = false;
+        return this._stop();
     }
 
     play( file ) {
-        return this.stop().then( () => this._play( file ) );
+        this._file = file;
+        return this._stop().then( () => this._play( file ) );
     }
 
     /**
@@ -38,6 +38,13 @@ class AvPlayer {
         volume = Number( volume );
         if ( isNaN( volume ) || volume < 0 || volume > 100 ) throw new Error( 'volume must be a number between 0 and 100' );
         this._volume = volume;
+    }
+
+    /**
+     * @param {boolean} loop
+     */
+    set loop( loop ) {
+        this._loop = loop;
     }
 
     /**
@@ -57,16 +64,52 @@ class AvPlayer {
         };
     }
 
+    /**
+     * @returns {boolean}
+     */
+    get running() {
+        return this._activePlayer && this._activePlayer.running;
+    }
+
     _play( file ) {
         return new Promise( ( resolve ) => {
             this._activePlayer = this._factory.createPlayer( file );
             this._activePlayer.once( 'start', () => {
+                this._started();
                 resolve();
             } );
+            this._activePlayer.once( 'stop', () => this._stopped() );
             this._activePlayer.volume = this._volume;
             this._activePlayer.start();
 
         } );
+    }
+
+    _stop() {
+        return new Promise( ( resolve ) => {
+            if ( this._activePlayer && this._activePlayer.running ) {
+                this._activePlayer.once( 'stop', () => {
+                    resolve();
+                } );
+                this._activePlayer.stop()
+            } else {
+                resolve();
+            }
+        } );
+    }
+
+    _started() {
+        setImmediate( () => this.emit( 'start' ) );
+    }
+
+    _stopped() {
+        setImmediate( () => this.emit( 'stop' ) );
+        if ( this._loop ) {
+            console.log( 'Loop: Restarting audio file' );
+            this.play( this._file );
+        } else {
+            console.log( 'Not restarting.', this._loop );
+        }
     }
 
 }

@@ -57,7 +57,11 @@ class OmxPlayer extends AbstractPlayer {
     _stop() {
         if ( this._process ) {
             this._process.kill( 'SIGINT' );
-            childProcess.execSync( 'killall omxplayer.bin' );
+            try {
+                childProcess.execSync( 'killall omxplayer.bin' );
+            } catch ( e ) {
+                // Not running anymore.
+            }
         }
     }
 
