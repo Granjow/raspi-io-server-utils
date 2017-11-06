@@ -55,11 +55,10 @@ class AvPlayer extends EventEmitter {
     }
 
     get status() {
-        if ( this._activePlayer ) {
-            return this._activePlayer.status;
-        }
         return {
             volume: this._volume,
+            file: this._file,
+            running: this.running,
             activePlayer: this._activePlayer ? this._activePlayer.status : 'No active player',
         };
     }
