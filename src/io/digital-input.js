@@ -11,13 +11,17 @@ module.exports = class DigitalInput extends EventEmitter {
 
     /**
      * @param {number} pin Physical pin to read
+     * @param {boolean} highIsOff Invert the input: low = on, high = off
      */
-    constructor( pin ) {
+    constructor( pin, highIsOff ) {
         super();
 
         this._pin = pin;
         this._tEnabled = undefined;
+        this._highIsOff = highIsOff;
         this._currentStatus = false;
+
+        this._on = highIsOff ? rpio.LOW : rpio.HIGH;
 
         this.reset();
 
@@ -37,6 +41,7 @@ module.exports = class DigitalInput extends EventEmitter {
             pin: this.pin,
             status: this.currentStatus,
             tEnabled: this.tEnabled,
+            highIsOff: this._highIsOff,
         };
     }
 
@@ -65,7 +70,7 @@ module.exports = class DigitalInput extends EventEmitter {
 
     _stateChanged() {
         const status = rpio.read( this._pin );
-        if ( status === rpio.HIGH ) {
+        if ( status === this._on ) {
             this._currentStatus = true;
             this.setActivated();
         } else {
