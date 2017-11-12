@@ -31,7 +31,7 @@ class MPlayer extends AbstractPlayer {
     _start() {
         this._process = childProcess.spawn(
             'mplayer',
-            `-nogui -display :0 -fs -volume ${this._mplayerVolume} ${this._file}`.split( ' ' )
+            `-nogui -display :0 -fs -volume ${this._mplayerVolume}`.split( ' ' ).concat( [ this._file ] )
         );
 
         this._process.stderr.on( 'data', data => {

@@ -35,7 +35,7 @@ class OmxPlayer extends AbstractPlayer {
     _start() {
         this._process = childProcess.spawn(
             'omxplayer',
-            [ this.videoArgs, `-no-osd --no-keys --vol ${this._omxVolume} ${this._file}` ].join( ' ' ).split( ' ' )
+            this.videoArgs.split( ' ' ).concat( '-no-osd --no-keys --vol ${this._omxVolume}'.split( ' ' ), this._file )
         );
 
         this._process.stderr.on( 'data', data => {

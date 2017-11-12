@@ -29,13 +29,23 @@ class VlcPlayer extends AbstractPlayer {
     }
 
     _start() {
+        let stderr = '';
+
         this._process = childProcess.spawn(
-            'cvlc',
-            `--play-and-exit --gain=${this._vlcVolume} -f ${this._file}`.split( ' ' )
-        );
+            'cvlc', [
+                '--play-and-exit', `--gain=${this._vlcVolume}`, '-f', this._file
+            ] );
 
         this._process.stderr.on( 'data', data => {
             console.error( data.toString() );
+
+            stderr += data.toString();
+            stderr.split( '\n' )
+                .filter( line => line.indexOf( 'cannot open file' ) > 0 )
+                .some( err => {
+                    this.emit( 'error', err );
+                    this._stop();
+                } );
         } );
 
         this._process.on( 'exit', () => {

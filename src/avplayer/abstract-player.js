@@ -33,6 +33,7 @@ class AbstractPlayer extends EventEmitter {
             playedSeconds: this.playTimeSeconds,
             volume: this._volume,
             playerName: this.playerName,
+            error: this._error,
         };
     }
 
@@ -78,6 +79,10 @@ class AbstractPlayer extends EventEmitter {
     _stopped() {
         this._tStop = Date.now();
         setImmediate( () => this.emit( 'stop' ) );
+    }
+
+    _setError( err ) {
+        this._error = err;
     }
 
 }

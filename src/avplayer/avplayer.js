@@ -78,6 +78,9 @@ class AvPlayer extends EventEmitter {
                 resolve();
             } );
             this._activePlayer.once( 'stop', () => this._stopped() );
+            this._activePlayer.once( 'error', ( err ) => {
+                this._error( err );
+            } );
             this._activePlayer.volume = this._volume;
             this._activePlayer.start();
 
@@ -109,6 +112,11 @@ class AvPlayer extends EventEmitter {
         } else {
             console.log( 'Not restarting.', this._loop );
         }
+    }
+
+    _error( err ) {
+        setImmediate( () => this.emit( 'error', err ) );
+        console.error( 'Player error: ' + err );
     }
 
 }
