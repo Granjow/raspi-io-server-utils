@@ -17,7 +17,7 @@ module.exports = class DigitalOutput extends EventEmitter {
         try {
             rpio.open( pin, rpio.OUTPUT, rpio.LOW );
         } catch ( e ) {
-            throw new Error( `Could not open input pin ${pin}: ${e.message}` );
+            throw new Error( `Could not open input pin ${pin}: ${e.message || e}` );
         }
     }
 
