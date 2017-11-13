@@ -25,7 +25,12 @@ module.exports = class DigitalInput extends EventEmitter {
 
         this.reset();
 
-        rpio.open( pin, rpio.INPUT, rpio.PULL_DOWN );
+        try {
+            rpio.open( pin, rpio.INPUT, rpio.PULL_DOWN );
+        } catch (e) {
+            throw new Error( `Could not open output pin ${pin}: ${e.message}` );
+        }
+
         rpio.poll( pin, () => this._stateChanged(), rpio.POLL_BOTH );
 
         // Read initial status
