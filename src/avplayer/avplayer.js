@@ -26,6 +26,10 @@ class AvPlayer extends EventEmitter {
         return this._stop();
     }
 
+    /**
+     * @param {string} file
+     * @return {PromiseLike<any> | Promise<any>}
+     */
     play( file ) {
         this._file = file;
         return this._stop().then( () => this._play( file ) );
@@ -70,6 +74,10 @@ class AvPlayer extends EventEmitter {
         return this._activePlayer && this._activePlayer.running;
     }
 
+    /**
+     * @param {string} file
+     * @return {Promise<any>} Resolves when playback starts or when an error occurs
+     */
     _play( file ) {
         return new Promise( ( resolve ) => {
             this._activePlayer = this._factory.createPlayer( file );
