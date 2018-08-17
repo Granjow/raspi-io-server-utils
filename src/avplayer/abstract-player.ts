@@ -1,11 +1,12 @@
 const EventEmitter = require( 'events' );
 
-class AbstractPlayer extends EventEmitter {
+export abstract class AbstractPlayer extends EventEmitter {
 
-    /**
-     * @param {string} file
-     */
-    constructor( file ) {
+    private readonly _file : string;
+    protected _volume : number;
+    private _error : Error | undefined;
+
+    protected constructor( file : string ) {
         super();
 
         this._file = file;
@@ -21,9 +22,9 @@ class AbstractPlayer extends EventEmitter {
     }
 
     /**
-     * @param {number} volume Volume between 0 and 100
+     * @param volume Volume between 0 and 100
      */
-    set volume( volume ) {
+    set volume( volume : number ) {
         this._volume = volume;
     }
 
@@ -37,7 +38,7 @@ class AbstractPlayer extends EventEmitter {
         };
     }
 
-    get playTime() {
+    get playTime() : number {
         if ( this._tStart ) {
             if ( this._tStop > this._tStart ) {
                 return this._tStop - this._tStart;
@@ -48,27 +49,32 @@ class AbstractPlayer extends EventEmitter {
         return 0;
     }
 
-    get playTimeSeconds() {
+    protected abstract _start() : void;
+
+    protected abstract _stop() : void;
+
+    get playTimeSeconds() : number {
         return Math.round( this.playTime / 100 ) / 10;
     }
 
-    get playerName() {
+    get playerName() : string {
         throw new Error( 'Not implemented!' );
     }
 
-    get running() {
+    get running() : boolean {
         throw new Error( 'Not implemented!' );
     }
 
-    /**
-     * @returns {number}
-     */
-    get volume() {
+    get volume() : number {
         return this._volume;
     }
 
-    get isVideo() {
+    get isVideo() : boolean {
         return /(mp3|wav)$/i.test( this._file );
+    }
+
+    get file() : string {
+        return this._file;
     }
 
     _started() {
@@ -81,10 +87,8 @@ class AbstractPlayer extends EventEmitter {
         setImmediate( () => this.emit( 'stop' ) );
     }
 
-    _setError( err ) {
+    _setError( err : Error ) {
         this._error = err;
     }
 
 }
-
-module.exports = AbstractPlayer;

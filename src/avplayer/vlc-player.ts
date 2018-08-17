@@ -1,18 +1,19 @@
-const childProcess = require( 'child_process' );
-const AbstractPlayer = require( './abstract-player' );
+import { AbstractPlayer } from './abstract-player';
 
-class VlcPlayer extends AbstractPlayer {
+const childProcess = require( 'child_process' );
+
+export class VlcPlayer extends AbstractPlayer {
 
     static checkAvailability() {
         return new Promise( ( resolve, reject ) => {
-            childProcess.exec( 'cvlc --version', err => {
+            childProcess.exec( 'cvlc --version', ( err : Error ) => {
                 if ( err ) reject();
                 else resolve();
             } );
         } );
     }
 
-    constructor( file ) {
+    constructor( file : string ) {
         super( file );
     }
 
@@ -33,18 +34,19 @@ class VlcPlayer extends AbstractPlayer {
 
         this._process = childProcess.spawn(
             'cvlc', [
-                '--play-and-exit', `--gain=${this._vlcVolume}`, '-f', this._file
+                '--play-and-exit', `--gain=${this._vlcVolume}`, '-f', this.file
             ] );
 
-        this._process.stderr.on( 'data', data => {
+        this._process.stderr.on( 'data', ( data : any ) => {
             console.error( data.toString() );
 
             stderr += data.toString();
             stderr.split( '\n' )
                 .filter( line => line.indexOf( 'cannot open file' ) > 0 )
-                .some( err => {
+                .some( ( err : string ) => {
                     this.emit( 'error', err );
                     this._stop();
+                    return true;
                 } );
         } );
 
@@ -52,7 +54,7 @@ class VlcPlayer extends AbstractPlayer {
             console.log( 'Exited.' );
             this._stopped();
         } );
-        this._process.on( 'error', ( err ) => {
+        this._process.on( 'error', ( err : Error ) => {
             console.error( 'Error!', err );
             this._stopped();
         } );

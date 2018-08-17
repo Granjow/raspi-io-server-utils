@@ -1,10 +1,10 @@
-const PlayerFactory = require( './avplayer/av-player-factory' );
+import { AvPlayerFactory } from './avplayer/av-player-factory';
 
 const file = 'audio.mp3';
 const dur = 4000;
 
 
-const factory = new PlayerFactory();
+const factory = new AvPlayerFactory();
 factory.init( [ 'omxplayer' ] ).then( () => {
 
     const player = factory.createPlayer( file );

@@ -8,32 +8,29 @@ const check = require( 'check-types' );
  * - `new-time` when the time of any member changed
  * - `time` when the time of the owner was changed by a client (may be renamed in future)
  */
-class VectorClock extends EventEmitter {
+export class VectorClock extends EventEmitter {
 
-    /**
-     * @param {string|{owner: string, time: Array}} data
-     */
-    constructor( data ) {
+    private readonly _ownId : string;
+    private _clock : Map<string, number>;
+
+    constructor( data : { owner : string, time? : any[] } ) {
         super();
 
-        /** @type {Map.<string,number>} */
         this._clock = new Map();
 
-        let ownId;
-        if ( check.string( data ) ) {
-            ownId = data;
-        } else {
-            if ( check.not.object( data ) ) throw new Error( 'Must pass either an ID (string) or an object to construct a vector clock' );
-            if ( check.not.string( data.owner ) ) throw new Error( 'owner is required when constructing from object' );
-            if ( check.not.array( data.time ) ) throw new Error( 'time vector is required when constructing from object' );
+        if ( check.not.object( data ) ) throw new Error( 'Must pass either an ID (string) or an object to construct a vector clock' );
+        if ( check.not.string( data.owner ) ) throw new Error( 'owner is required when constructing from object' );
 
-            ownId = data.owner;
+        const ownId = data.owner;
+
+        if ( check.array( data.time ) ) {
             data.time.forEach( t => {
+                if ( check.not.string( t.id ) ) throw new Error( `time vector IDs must be strings: {id:string,t:number}[]. Received ${JSON.stringify( t )}` );
+                if ( check.not.number( t.time ) ) throw new Error( `time vector times must be numbers: {id:string,t:number}[]. Received ${JSON.stringify( t )}` );
                 this.updateOther( t.id, t.time );
             } );
         }
 
-        /** @type {string} */
         this._ownId = ownId;
 
         if ( !this._clock.has( ownId ) ) {
@@ -41,29 +38,20 @@ class VectorClock extends EventEmitter {
         }
     }
 
-    get id() {
+    get id() : string {
         return this._ownId;
     }
 
-    /**
-     * @returns {number}
-     */
-    get time() {
+    get time() : number {
         return this._clock.get( this._ownId );
     }
 
-    /**
-     * @param {number} time
-     */
-    set time( time ) {
-        return this._clock.set( this._ownId, time );
+    set time( time : number ) {
+        this._clock.set( this._ownId, time );
     }
 
-    /**
-     * @returns {{id:string, time: number}[]}
-     */
-    get timestamps() {
-        const timestamps = [];
+    get timestamps() : { id : string, time : number }[] {
+        const timestamps : { id : string, time : number }[] = [];
         this._clock.forEach( ( v, k ) => timestamps.push( { id: k, time: v } ) );
         return timestamps;
     }
@@ -81,45 +69,41 @@ class VectorClock extends EventEmitter {
         return this;
     }
 
-    /**
-     * @param {VectorClock} other
-     */
-    newerThan( other ) {
+    newerThan( other : VectorClock ) {
         let newer = 0;
         let newerOrEqual = 0;
         this._clock.forEach( ( v, k ) => {
-            newer += v > other.timeOf( k );
-            newerOrEqual += v >= other.timeOf( k );
+            newer += Number( v > other.timeOf( k ) );
+            newerOrEqual += Number( v >= other.timeOf( k ) );
         } );
         const knowsAll = other.timestamps.every( timestamp => this._clock.has( timestamp.id ) );
         return knowsAll && newerOrEqual > 0 && newer > 0;
     }
 
     /**
-     * @param {VectorClock} otherClock
-     * @returns {boolean} true, if this clock holds information about the owner of another clock.
+     * @param otherClock
+     * @returns true, if this clock holds information about the owner of another clock.
      */
-    knowsOwnerOf( otherClock ) {
+    knowsOwnerOf( otherClock : VectorClock ) : boolean {
         return this._clock.has( otherClock.id );
     }
 
     /**
      * Only checks the timestamp of this clock's owner, ignores all other timestamps
-     * @param {VectorClock} other
      */
-    ownTimestampNewerThan( other ) {
+    ownTimestampNewerThan( other : VectorClock ) : boolean {
         return this.time > other.time;
     }
 
     /**
      * Integrate vector time of other into own time (update timestamps of all clients)
-     * @param {VectorClock} other
-     * @param {boolean=} canUpdateMyTime Set to true if other clocks can update the time of this clock.
+     * @param other
+     * @param canUpdateMyTime Set to true if other clocks can update the time of this clock.
      * This is useful e.g. if the owner of this clock could go offline and lose the current time, so it is recovered.
      */
-    syncFrom( other, canUpdateMyTime ) {
+    syncFrom( other : VectorClock, canUpdateMyTime : boolean = false ) {
         let changes = 0;
-        const errors = [];
+        const errors : string[] = [];
 
         other.timestamps.forEach( time => {
             if ( time.id !== this._ownId ) {
@@ -146,17 +130,17 @@ class VectorClock extends EventEmitter {
         return this;
     }
 
-    timeOf( id ) {
+    timeOf( id : string ) : number {
         return this._clock.get( id );
     }
 
-    toString() {
+    toString() : string {
         const times = [ `{Vector Clock for ${this._ownId}}` ];
         this._clock.forEach( ( v, k ) => times.push( `  ${v} : ${k}${k === this._ownId ? ' (self)' : ''}` ) );
         return times.join( '\n' );
     }
 
-    updateOther( id, time ) {
+    updateOther( id : string, time : number ) {
         if ( id === this._ownId ) throw new Error( 'Other client has same ID: ' + id );
         if ( check.not.string( id ) ) throw new Error( 'Client ID must be a string. Received: ' + id );
         if ( check.not.greaterOrEqual( time, 0 ) ) throw new Error( `Time for client ${id} must be a number > 0` );
@@ -177,5 +161,3 @@ class VectorClock extends EventEmitter {
         setImmediate( () => this.emit( 'new-time' ) );
     }
 }
-
-module.exports = VectorClock;

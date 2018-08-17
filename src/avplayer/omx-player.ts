@@ -1,18 +1,19 @@
-const childProcess = require( 'child_process' );
-const AbstractPlayer = require( './abstract-player' );
+import { AbstractPlayer } from './abstract-player';
 
-class MPlayer extends AbstractPlayer {
+const childProcess = require( 'child_process' );
+
+export class OmxPlayer extends AbstractPlayer {
 
     static checkAvailability() {
         return new Promise( ( resolve, reject ) => {
-            childProcess.exec( 'which mplayer', err => {
+            childProcess.exec( 'omxplayer --version', ( err : Error ) => {
                 if ( err ) reject();
                 else resolve();
             } );
         } );
     }
 
-    constructor( file ) {
+    constructor( file : string ) {
         super( file );
     }
 
@@ -21,20 +22,24 @@ class MPlayer extends AbstractPlayer {
     }
 
     get playerName() {
-        return 'mplayer';
+        return 'omxplayer';
     }
 
-    get _mplayerVolume() {
-        return this._volume;
+    get _omxVolume() {
+        return Math.round( this._volume / 100 * 5000 - 5000 );
+    }
+
+    get videoArgs() {
+        return this.isVideo ? '-b' : '';
     }
 
     _start() {
         this._process = childProcess.spawn(
-            'mplayer',
-            `-nogui -display :0 -fs -volume ${this._mplayerVolume}`.split( ' ' ).concat( [ this._file ] )
+            'omxplayer',
+            this.videoArgs.split( ' ' ).concat( '-no-osd --no-keys --vol ${this._omxVolume}'.split( ' ' ), this.file )
         );
 
-        this._process.stderr.on( 'data', data => {
+        this._process.stderr.on( 'data', ( data : any ) => {
             console.error( data.toString() );
         } );
 
@@ -42,7 +47,7 @@ class MPlayer extends AbstractPlayer {
             console.log( 'Exited.' );
             this._stopped();
         } );
-        this._process.on( 'error', ( err ) => {
+        this._process.on( 'error', ( err : Error ) => {
             console.error( 'Error!', err );
             this._stopped();
         } );
@@ -53,6 +58,11 @@ class MPlayer extends AbstractPlayer {
     _stop() {
         if ( this._process ) {
             this._process.kill( 'SIGINT' );
+            try {
+                childProcess.execSync( 'killall omxplayer.bin' );
+            } catch ( e ) {
+                // Not running anymore.
+            }
         }
     }
 
@@ -65,4 +75,4 @@ class MPlayer extends AbstractPlayer {
 
 }
 
-module.exports = MPlayer;
+module.exports = OmxPlayer;

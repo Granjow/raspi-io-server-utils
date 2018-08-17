@@ -1,4 +1,4 @@
-const DigitalInput = require( '../src/io/digital-input' );
+import { DigitalInput } from '../src/io/digital-input';
 
 describe( 'Digital Input', () => {
     it( 'can be constructed', () => {

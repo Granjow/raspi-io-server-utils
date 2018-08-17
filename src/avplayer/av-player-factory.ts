@@ -1,10 +1,13 @@
+import { OmxPlayer } from './omx-player';
+import { MPlayer } from './m-player';
+import { VlcPlayer } from './vlc-player';
+import { AbstractPlayer } from './abstract-player';
+
 const EventEmitter = require( 'events' );
 
-const VlcPlayer = require( './vlc-player' );
-const OmxPlayer = require( './omx-player' );
-const MPlayer = require( './m-player' );
+export class AvPlayerFactory extends EventEmitter {
 
-class AVPlayerFactory extends EventEmitter {
+    private _availableFactories : any;
 
     constructor() {
         super();
@@ -15,11 +18,10 @@ class AVPlayerFactory extends EventEmitter {
     /**
      * Initialise the factory; test which players are available.
      *
-     * @param {string[]=} preferredOrder See #preferredOrder
-     * @returns {Promise.<void>}
+     * @param preferredOrder See #preferredOrder
      */
-    init( preferredOrder ) {
-        const name = 'AVPlayerFactory';
+    init( preferredOrder? : string[] ) : Promise<void> {
+        const name = 'AvPlayerFactory';
 
         const vlcCheck = VlcPlayer.checkAvailability().then(
             () => {
@@ -59,9 +61,9 @@ class AVPlayerFactory extends EventEmitter {
      * Define in which order players should be created.
      * @param {string[]} order
      */
-    set preferredOrder( order ) {
-        if ( !(order instanceof Array) ) return;
-        const preferredOrder = order.map( name => {
+    set preferredOrder( order : string[] ) {
+        if ( !( order instanceof Array ) ) return;
+        const factoriesInOrder = order.map( name => {
             switch ( name ) {
                 case 'mplayer':
                     return MPlayer;
@@ -74,17 +76,12 @@ class AVPlayerFactory extends EventEmitter {
                     return undefined;
             }
         } );
-        this._availableFactories = preferredOrder
+        this._availableFactories = factoriesInOrder
             .filter( player => this._availableFactories.includes( player ) )
-            .concat( this._availableFactories.filter( factory => !preferredOrder.includes( factory ) ) );
+            .concat( this._availableFactories.filter( ( factory : any ) => !factoriesInOrder.includes( factory ) ) );
     }
 
-    /**
-     *
-     * @param {string} file
-     * @return {AbstractPlayer}
-     */
-    createPlayer( file ) {
+    createPlayer( file : string ) : AbstractPlayer {
         if ( this._availableFactories.length > 0 ) {
             return new this._availableFactories[ 0 ]( file );
         } else {
@@ -93,5 +90,3 @@ class AVPlayerFactory extends EventEmitter {
     }
 
 }
-
-module.exports = AVPlayerFactory;

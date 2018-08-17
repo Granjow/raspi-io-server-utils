@@ -1,18 +1,20 @@
+import { AvPlayerFactory } from './av-player-factory';
+import { AbstractPlayer } from './abstract-player';
+
 const EventEmitter = require( 'events' );
-const PlayerFactory = require( './av-player-factory' );
 
-/**
- * @type {AVPlayer}
- */
-class AvPlayer extends EventEmitter {
+export class AvPlayer extends EventEmitter {
 
-    /**
-     * @param {string[]=} preferredPlayers
-     */
-    constructor( preferredPlayers ) {
+    private _factory : AvPlayerFactory;
+    private _volume : number;
+    private _loop : boolean;
+    private _activePlayer : AbstractPlayer | undefined;
+    private _file : string;
+
+    constructor( preferredPlayers? : string[] ) {
         super();
 
-        this._factory = new PlayerFactory();
+        this._factory = new AvPlayerFactory();
         this._factory.init( preferredPlayers ).then( () => this.emit( 'ready' ) );
 
         this._volume = 50;
@@ -21,40 +23,27 @@ class AvPlayer extends EventEmitter {
         this._file = undefined;
     }
 
-    stop() {
+    stop() : Promise<void> {
         this.loop = false;
         return this._stop();
     }
 
-    /**
-     * @param {string} file
-     * @return {PromiseLike<any> | Promise<any>}
-     */
-    play( file ) {
+    play( file : string ) : Promise<any> {
         this._file = file;
         return this._stop().then( () => this._play( file ) );
     }
 
-    /**
-     * @param {number} volume
-     */
-    set volume( volume ) {
+    set volume( volume : number ) {
         volume = Number( volume );
         if ( isNaN( volume ) || volume < 0 || volume > 100 ) throw new Error( 'volume must be a number between 0 and 100' );
         this._volume = volume;
     }
 
-    /**
-     * @param {boolean} loop
-     */
-    set loop( loop ) {
+    set loop( loop : boolean ) {
         this._loop = loop;
     }
 
-    /**
-     * @returns {number}
-     */
-    get volume() {
+    get volume() : number {
         return this._volume;
     }
 
@@ -67,18 +56,14 @@ class AvPlayer extends EventEmitter {
         };
     }
 
-    /**
-     * @returns {boolean}
-     */
-    get running() {
+    get running() : boolean {
         return this._activePlayer && this._activePlayer.running;
     }
 
     /**
-     * @param {string} file
-     * @return {Promise<any>} Resolves when playback starts or when an error occurs
+     * @return Resolves when playback starts or when an error occurs
      */
-    _play( file ) {
+    _play( file : string ) : Promise<void> {
         return new Promise( ( resolve ) => {
             this._activePlayer = this._factory.createPlayer( file );
             this._activePlayer.once( 'start', () => {
@@ -86,7 +71,7 @@ class AvPlayer extends EventEmitter {
                 resolve();
             } );
             this._activePlayer.once( 'stop', () => this._stopped() );
-            this._activePlayer.once( 'error', ( err ) => {
+            this._activePlayer.once( 'error', ( err : Error ) => {
                 this._error( err );
             } );
             this._activePlayer.volume = this._volume;
@@ -95,7 +80,7 @@ class AvPlayer extends EventEmitter {
         } );
     }
 
-    _stop() {
+    _stop() : Promise<void> {
         return new Promise( ( resolve ) => {
             if ( this._activePlayer && this._activePlayer.running ) {
                 this._activePlayer.once( 'stop', () => {
@@ -122,7 +107,7 @@ class AvPlayer extends EventEmitter {
         }
     }
 
-    _error( err ) {
+    _error( err : Error ) {
         setImmediate( () => this.emit( 'error', err ) );
         console.error( 'Player error: ' + err );
     }

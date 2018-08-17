@@ -4,7 +4,8 @@
   "description": "Utilities for interacting with Raspberry IOs and Raspbian",
   "main": "src/index.js",
   "scripts": {
-    "test": "jasmine"
+    "build": "tsc",
+    "test": "npm run build && jasmine"
   },
   "homepage": "https://github.com/Granjow/raspi-io-server-utils",
   "repository": {
@@ -23,12 +24,14 @@
     "gpio"
   ],
   "dependencies": {
+    "@types/node": "^10.7.1",
     "check-types": "^7.4.0",
-    "rpio": "^0.9.22"
+    "rpio": "^0.9.22",
+    "typescript": "^3.0.1"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.6.2",
-    "jasmine": "^2.8.0",
-    "jasmine-core": "^2.8.0"
+    "@types/jasmine": "^2.8.8",
+    "jasmine": "^3.2.0",
+    "jasmine-core": "^3.2.1"
   }
 }

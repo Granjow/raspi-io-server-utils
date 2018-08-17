@@ -7,13 +7,19 @@ const rpio = require( 'rpio' );
  *
  * @type {DigitalInput}
  */
-module.exports = class DigitalInput extends EventEmitter {
+export class DigitalInput extends EventEmitter {
+
+    private readonly _pin : number;
+    private readonly _highIsOff : boolean;
+    private readonly _ON : number;
+    private _tEnabled : number;
+    private _currentStatus : boolean;
 
     /**
-     * @param {number} pin Physical pin to read
-     * @param {boolean} highIsOff Invert the input: low = on, high = off
+     * @param pin Physical pin to read
+     * @param highIsOff Invert the input: low = on, high = off
      */
-    constructor( pin, highIsOff ) {
+    constructor( pin : number, highIsOff : boolean = false ) {
         super();
 
         this._pin = pin;
@@ -21,13 +27,13 @@ module.exports = class DigitalInput extends EventEmitter {
         this._highIsOff = highIsOff;
         this._currentStatus = false;
 
-        this._on = highIsOff ? rpio.LOW : rpio.HIGH;
+        this._ON = highIsOff ? rpio.LOW : rpio.HIGH;
 
         this.reset();
 
         try {
             rpio.open( pin, rpio.INPUT, rpio.PULL_DOWN );
-        } catch (e) {
+        } catch ( e ) {
             throw new Error( `Could not open output pin ${pin}: ${e.message || e}` );
         }
 
@@ -37,7 +43,7 @@ module.exports = class DigitalInput extends EventEmitter {
         this._stateChanged();
     }
 
-    get pin() {
+    get pin() : number {
         return this._pin;
     }
 
@@ -51,16 +57,16 @@ module.exports = class DigitalInput extends EventEmitter {
     }
 
     /**
-     * @returns {number} Timestamp when the input was activated the last time
+     * @returns Timestamp when the input was activated the last time
      */
-    get tEnabled() {
+    get tEnabled() : number {
         return this._tEnabled;
     }
 
     /**
-     * @returns {boolean} true, if the input is currently HIGH
+     * @returns true, if the input is currently HIGH
      */
-    get currentStatus() {
+    get currentStatus() : boolean {
         return this._currentStatus;
     }
 
@@ -75,7 +81,7 @@ module.exports = class DigitalInput extends EventEmitter {
 
     _stateChanged() {
         const status = rpio.read( this._pin );
-        if ( status === this._on ) {
+        if ( status === this._ON ) {
             this._currentStatus = true;
             this.setActivated();
         } else {
@@ -83,4 +89,4 @@ module.exports = class DigitalInput extends EventEmitter {
         }
     }
 
-};
+}
