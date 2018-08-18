@@ -35,6 +35,10 @@ export class AvPlayer extends EventEmitter {
     private _activePlayer : AbstractPlayer | undefined;
     private _file : string;
 
+    /**
+     * @param preferredPlayers Defines the order of preferred audio/video players. The first existing is used.
+     * See {@link AvPlayerFactory} for a list of valid players.
+     */
     constructor( preferredPlayers? : string[] ) {
         super();
 

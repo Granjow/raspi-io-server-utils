@@ -70,7 +70,7 @@ export abstract class AbstractPlayer extends EventEmitter {
     }
 
     get isVideo() : boolean {
-        return /(mp3|wav)$/i.test( this._file );
+        return !/(mp3|wav|ogg)$/i.test( this._file );
     }
 
     get file() : string {

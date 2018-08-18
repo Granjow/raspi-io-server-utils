@@ -34,13 +34,21 @@ export class OmxPlayer extends AbstractPlayer {
     }
 
     _start() {
+        const playerArgs = this.videoArgs.split( ' ' )
+            .concat( '-no-osd --no-keys --vol ${this._omxVolume}'.split( ' ' ), this.file )
+            .filter( arg => arg.length > 0 );
+        console.log( 'Player args: ', JSON.stringify( playerArgs ) );
         this._process = childProcess.spawn(
             'omxplayer',
-            this.videoArgs.split( ' ' ).concat( '-no-osd --no-keys --vol ${this._omxVolume}'.split( ' ' ), this.file )
+            playerArgs
         );
 
-        this._process.stderr.on( 'data', ( data : any ) => {
+        this._process.stderr.on( 'data', ( data : Buffer ) => {
             console.error( data.toString() );
+        } );
+
+        this._process.stdout.on( 'data', ( data : Buffer ) => {
+            console.log( data.toString() );
         } );
 
         this._process.on( 'exit', () => {

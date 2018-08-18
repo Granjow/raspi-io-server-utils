@@ -5,6 +5,13 @@ import { AbstractPlayer } from './abstract-player';
 
 const EventEmitter = require( 'events' );
 
+/**
+ * Creates an A/V player. Valid players are:
+ *
+ * - `vlc` or `cvlc`
+ * - `omxplayer`
+ * - `mplayer`
+ */
 export class AvPlayerFactory extends EventEmitter {
 
     private _availableFactories : any;
@@ -59,7 +66,6 @@ export class AvPlayerFactory extends EventEmitter {
 
     /**
      * Define in which order players should be created.
-     * @param {string[]} order
      */
     set preferredOrder( order : string[] ) {
         if ( !( order instanceof Array ) ) return;
