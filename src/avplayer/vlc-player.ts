@@ -76,5 +76,3 @@ export class VlcPlayer extends AbstractPlayer {
     }
 
 }
-
-module.exports = VlcPlayer;

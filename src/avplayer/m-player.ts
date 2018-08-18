@@ -67,5 +67,3 @@ export class MPlayer extends AbstractPlayer {
     }
 
 }
-
-module.exports = MPlayer;

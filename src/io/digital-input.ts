@@ -5,7 +5,11 @@ const rpio = require( 'rpio' );
  * Digital input which listens to rising edges.
  * Keeps the state until reset.
  *
- * @type {DigitalInput}
+ * ## Events
+ *
+ * ### `enable`
+ *
+ * Emitted when the input changes to HIGH
  */
 export class DigitalInput extends EventEmitter {
 

@@ -74,5 +74,3 @@ export class OmxPlayer extends AbstractPlayer {
     }
 
 }
-
-module.exports = OmxPlayer;

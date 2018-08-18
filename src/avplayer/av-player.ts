@@ -3,6 +3,30 @@ import { AbstractPlayer } from './abstract-player';
 
 const EventEmitter = require( 'events' );
 
+/**
+ * # Audio/Video player
+ *
+ * This player checks the availability of some common players (mplayer, vlc, omxplayer) and uses what is available
+ * to play given media.
+ *
+ * ## Events
+ *
+ * ### `ready`
+ *
+ * Emitted when the AV player is ready and has checked the available players.
+ *
+ * ### `start`
+ *
+ * Video has been started.
+ *
+ * ### `stop`
+ *
+ * Video has been stopped.
+ *
+ * ### `error`
+ *
+ * Some kind of error has occurred.
+ */
 export class AvPlayer extends EventEmitter {
 
     private _factory : AvPlayerFactory;
@@ -113,5 +137,3 @@ export class AvPlayer extends EventEmitter {
     }
 
 }
-
-module.exports = AvPlayer;
