@@ -9,7 +9,11 @@ const rpio = require( 'rpio' );
  *
  * ### `enable`
  *
- * Emitted when the input changes to HIGH
+ * Emitted when the input changes to logical HIGH (depending on the `highIsOff` settings)
+ *
+ * ### `disable`
+ *
+ * Emitted when the input changes to logical LOW
  */
 export class DigitalInput extends EventEmitter {
 
@@ -83,13 +87,19 @@ export class DigitalInput extends EventEmitter {
         setImmediate( () => this.emit( 'enable' ) );
     }
 
+    setDeactivated() {
+        setImmediate( () => this.emit( 'disable' ) );
+    }
+
     _stateChanged() {
         const status = rpio.read( this._pin );
+        const oldStatus = this._currentStatus;
         if ( status === this._ON ) {
             this._currentStatus = true;
-            this.setActivated();
+            if ( !oldStatus ) this.setActivated();
         } else {
             this._currentStatus = false;
+            if ( oldStatus ) this.setDeactivated();
         }
     }
 
