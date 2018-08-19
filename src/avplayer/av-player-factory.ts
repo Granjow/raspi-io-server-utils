@@ -32,26 +32,26 @@ export class AvPlayerFactory extends EventEmitter {
 
         const vlcCheck = VlcPlayer.checkAvailability().then(
             () => {
-                console.log( name + ': cvlc is available.' );
+                console.log( name + ': ✓ cvlc is available.' );
                 this._availableFactories.push( VlcPlayer );
             },
-            () => console.log( name + ': cvlc not available.' )
+            () => console.log( name + ': ✗ cvlc not available.' )
         );
 
         const omxCheck = OmxPlayer.checkAvailability().then(
             () => {
                 this._availableFactories.push( OmxPlayer );
-                console.log( name + ': omxplayer is available.' );
+                console.log( name + ': ✓ omxplayer is available.' );
             },
-            () => console.log( name + ': omxplayer not available.' )
+            () => console.log( name + ': ✗ omxplayer not available.' )
         );
 
         const mplayerCheck = MPlayer.checkAvailability().then(
             () => {
                 this._availableFactories.push( MPlayer );
-                console.log( name + ': mplayer is available.' );
+                console.log( name + ': ✓ mplayer is available.' );
             },
-            () => console.log( name + ': mplayer not available.' )
+            () => console.log( name + ': ✗ mplayer not available.' )
         );
 
         return Promise.all( [ vlcCheck, omxCheck, mplayerCheck ] )

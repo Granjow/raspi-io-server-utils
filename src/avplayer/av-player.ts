@@ -91,7 +91,7 @@ export class AvPlayer extends EventEmitter {
     /**
      * @return Resolves when playback starts or when an error occurs
      */
-    _play( file : string ) : Promise<void> {
+    private _play( file : string ) : Promise<void> {
         return new Promise( ( resolve ) => {
             this._activePlayer = this._factory.createPlayer( file );
             this._activePlayer.once( 'start', () => {
@@ -108,7 +108,7 @@ export class AvPlayer extends EventEmitter {
         } );
     }
 
-    _stop() : Promise<void> {
+    private _stop() : Promise<void> {
         return new Promise( ( resolve ) => {
             if ( this._activePlayer && this._activePlayer.running ) {
                 this._activePlayer.once( 'stop', () => {
@@ -121,11 +121,11 @@ export class AvPlayer extends EventEmitter {
         } );
     }
 
-    _started() {
+    private _started() {
         setImmediate( () => this.emit( 'start' ) );
     }
 
-    _stopped() {
+    private _stopped() {
         setImmediate( () => this.emit( 'stop' ) );
         if ( this._loop ) {
             console.log( 'Loop: Restarting audio file' );

@@ -6,7 +6,7 @@ const rpio = require( 'rpio' );
  */
 export class DigitalOutput extends EventEmitter {
 
-    private _pin : number;
+    private readonly _pin : number;
     private _enabled : boolean;
 
     constructor( pin : number ) {
@@ -29,11 +29,11 @@ export class DigitalOutput extends EventEmitter {
         }
     }
 
-    get enabled() {
+    get enabled() : boolean {
         return this._enabled;
     }
 
-    set enabled( enabled ) {
+    set enabled( enabled : boolean ) {
         this._enabled = enabled;
         rpio.write( this._pin, enabled ? rpio.HIGH : rpio.LOW );
     }
