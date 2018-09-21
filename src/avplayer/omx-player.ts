@@ -25,7 +25,7 @@ export class OmxPlayer extends AbstractPlayer {
         return 'omxplayer';
     }
 
-    get _omxVolume() {
+    get _omxVolume() : number {
         return Math.round( this._volume / 100 * 5000 - 5000 );
     }
 
@@ -35,7 +35,7 @@ export class OmxPlayer extends AbstractPlayer {
 
     _start() {
         const playerArgs = this.videoArgs.split( ' ' )
-            .concat( '-no-osd --no-keys --vol ${this._omxVolume}'.split( ' ' ), this.file )
+            .concat( `-no-osd --no-keys --vol ${this._omxVolume}`.split( ' ' ), this.file )
             .filter( arg => arg.length > 0 );
         console.log( 'Player args: ', JSON.stringify( playerArgs ) );
         this._process = childProcess.spawn(
