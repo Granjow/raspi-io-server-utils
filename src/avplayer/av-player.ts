@@ -25,7 +25,7 @@ const EventEmitter = require( 'events' );
  *
  * ### `error`
  *
- * Some kind of error has occurred.
+ * Some kind of error has occurred. Must be handled, otherwise the process exit(1)s.
  */
 export class AvPlayer extends EventEmitter {
 
@@ -56,6 +56,10 @@ export class AvPlayer extends EventEmitter {
         return this._stop();
     }
 
+    /**
+     * Play back the specified file.
+     * Note: Do not forget to handle the error event.
+     */
     play( file : string ) : Promise<any> {
         this._file = file;
         return this._stop().then( () => this._play( file ) );
@@ -93,13 +97,16 @@ export class AvPlayer extends EventEmitter {
      */
     private _play( file : string ) : Promise<void> {
         return new Promise( ( resolve ) => {
+
+            if ( this._activePlayer ) this._activePlayer.removeAllListeners( 'error' );
+
             this._activePlayer = this._factory.createPlayer( file );
             this._activePlayer.once( 'start', () => {
                 this._started();
                 resolve();
             } );
             this._activePlayer.once( 'stop', () => this._stopped() );
-            this._activePlayer.once( 'error', ( err : Error ) => {
+            this._activePlayer.on( 'error', ( err : Error ) => {
                 this._error( err );
             } );
             this._activePlayer.volume = this._volume;
