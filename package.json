@@ -4,6 +4,10 @@
   "description": "Utilities for interacting with Raspberry IOs and Raspbian",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "files": [
+    "README.md",
+    "dist/src/**"
+  ],
   "scripts": {
     "build": "tsc",
     "prepack": "rm -rf dist && tsc",

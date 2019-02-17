@@ -1,8 +1,46 @@
 This package contains useful classes for the Raspberry Pi.
+TypeScript support included.
+
+ES6 example:
+
+```js
+const { DigitalInput, DigitalOutput } = require( 'raspi-io-server-utils' );
+
+const input = new DigitalInput( 11 );
+const output = new DigitalOutput( 13 );
+
+input.on( 'enable', () => {
+    output.enabled = !output.enabled;
+} );
+```
+
+TypeScript example:
+
+```typescript
+import { DigitalOutput } from 'raspi-io-server-utils/dist/src/io/digital-output';
+import { DigitalInput } from 'raspi-io-server-utils/dist/src/io/digital-input';
+
+const input : DigitalInput = new DigitalInput( 11 );
+const output : DigitalOutput = new DigitalOutput( 13 );
+
+input.on( 'enable', () => {
+    output.enabled = !output.enabled;
+} );
+```
 
 ## AVPlayer
 
 Starts audio/video files with VLC, mplayer, or omxplayer, whatever is available.
+
+```typescript
+import { AvPlayer } from 'raspi-io-server-utils/dist/src/avplayer/av-player';
+
+const player = new AvPlayer( [ 'vlc', 'omxplayer' ] );
+player.play( 'movie.mp3' ).catch(
+    ( err ) => console.error( 'Playback error', err )
+);
+```
+
 
 ## IO
 

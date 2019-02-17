@@ -1,4 +1,4 @@
-import { AvPlayerFactory } from './avplayer/av-player-factory';
+import { AvPlayerFactory } from '../src/avplayer/av-player-factory';
 
 const file = 'audio.mp3';
 const dur = 4000;
