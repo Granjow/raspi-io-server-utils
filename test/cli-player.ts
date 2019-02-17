@@ -1,4 +1,4 @@
-import { AvPlayer } from '../avplayer/av-player';
+import { AvPlayer } from '../src/avplayer/av-player';
 
 console.log( `Looping file ${process.argv[ 2 ]}` );
 

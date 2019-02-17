@@ -6,7 +6,8 @@
   "types": "dist/src/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "npm run build && jasmine"
+    "prepack": "rm -rf dist && tsc",
+    "test": "tsc && jasmine"
   },
   "homepage": "https://github.com/Granjow/raspi-io-server-utils",
   "repository": {
