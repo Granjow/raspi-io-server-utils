@@ -24,6 +24,9 @@ export class DigitalInput extends EventEmitter {
     private _currentStatus : boolean;
 
     /**
+     * Creates a new digital input which is polled for changes. When the pin changes,
+     * an `enable` or `disable` event is emitted.
+     *
      * @param pin Physical pin to read
      * @param highIsOff Invert the input: low = on, high = off
      */

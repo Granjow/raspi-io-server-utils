@@ -59,18 +59,27 @@ export class AvPlayer extends EventEmitter {
     /**
      * Play back the specified file.
      * Note: Do not forget to handle the error event.
+     *
+     * @return Promise which resolves as soon as playback has started.
      */
     play( file : string ) : Promise<any> {
         this._file = file;
         return this._stop().then( () => this._play( file ) );
     }
 
+    /**
+     * Set the audio volume. This does not affect the current playback as it is passed as command-line argument.
+     * @param volume Volume, between 0 and 100
+     */
     set volume( volume : number ) {
         volume = Number( volume );
         if ( isNaN( volume ) || volume < 0 || volume > 100 ) throw new Error( 'volume must be a number between 0 and 100' );
         this._volume = volume;
     }
 
+    /**
+     * @param loop When `true`, the file is looped.
+     */
     set loop( loop : boolean ) {
         this._loop = loop;
     }
