@@ -19,6 +19,7 @@ export class DigitalInput extends EventEmitter {
 
     private readonly _pin : number;
     private readonly _highIsOff : boolean;
+    private readonly _pullup : boolean;
     private readonly _ON : number;
     private _tEnabled : number;
     private _currentStatus : boolean;
@@ -29,13 +30,15 @@ export class DigitalInput extends EventEmitter {
      *
      * @param pin Physical pin to read
      * @param highIsOff Invert the input: low = on, high = off
+     * @param pullUp Enable pullup resistor. If false, the pulldown resistor is enabled.
      */
-    constructor( pin : number, highIsOff : boolean = false ) {
+    constructor( pin : number, highIsOff : boolean = false, pullUp : boolean = false ) {
         super();
 
         this._pin = pin;
         this._tEnabled = undefined;
         this._highIsOff = highIsOff;
+        this._pullup = pullUp;
         this._currentStatus = false;
 
         this._ON = highIsOff ? rpio.LOW : rpio.HIGH;
@@ -43,7 +46,7 @@ export class DigitalInput extends EventEmitter {
         this.reset();
 
         try {
-            rpio.open( pin, rpio.INPUT, rpio.PULL_DOWN );
+            rpio.open( pin, rpio.INPUT, pullUp ? rpio.PULL_UP : rpio.PULL_DOWN );
         } catch ( e ) {
             throw new Error( `Could not open output pin ${pin}: ${e.message || e}` );
         }
@@ -64,6 +67,7 @@ export class DigitalInput extends EventEmitter {
             status: this.currentStatus,
             tEnabled: this.tEnabled,
             highIsOff: this._highIsOff,
+            pullup: this._pullup,
         };
     }
 
