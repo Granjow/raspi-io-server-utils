@@ -58,6 +58,8 @@ export class AvPlayer extends EventEmitter {
 
     /**
      * Play back the specified file.
+     * If playback is already active, it is stopped and then the new file is played back.
+     *
      * Note: Do not forget to handle the error event.
      *
      * @return Promise which resolves as soon as playback has started.
