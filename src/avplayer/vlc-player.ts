@@ -32,10 +32,14 @@ export class VlcPlayer extends AbstractPlayer {
     _start() {
         let stderr = '';
 
-        this._process = childProcess.spawn(
-            'cvlc', [
-                '--play-and-exit', `--gain=${this._vlcVolume}`, '-f', this.file
-            ] );
+        const args : string[] = [
+            '--play-and-exit',
+            `--gain=${this._vlcVolume}`,
+            '--no-video-title-show',
+            '-f', this.file,
+        ];
+
+        this._process = childProcess.spawn( 'cvlc', args );
 
         this._process.stderr.on( 'data', ( data : any ) => {
             console.error( data.toString() );
