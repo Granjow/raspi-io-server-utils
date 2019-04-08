@@ -1,10 +1,20 @@
 This package contains useful classes for the Raspberry Pi.
 TypeScript support included.
 
+Changes: See [CHANGELOG.md](CHANGELOG.md).
+
+
+## Usage
+
 ES6 example:
 
 ```js
+// JavaScript
 const { DigitalInput, DigitalOutput } = require( 'raspi-io-server-utils' );
+
+// TypeScript
+import { DigitalOutput } from 'raspi-io-server-utils/dist/src/io/digital-output';
+import { DigitalInput } from 'raspi-io-server-utils/dist/src/io/digital-input';
 
 const input = new DigitalInput( 11 );
 const output = new DigitalOutput( 13 );
@@ -14,19 +24,6 @@ input.on( 'enable', () => {
 } );
 ```
 
-TypeScript example:
-
-```typescript
-import { DigitalOutput } from 'raspi-io-server-utils/dist/src/io/digital-output';
-import { DigitalInput } from 'raspi-io-server-utils/dist/src/io/digital-input';
-
-const input : DigitalInput = new DigitalInput( 11 );
-const output : DigitalOutput = new DigitalOutput( 13 );
-
-input.on( 'enable', () => {
-    output.enabled = !output.enabled;
-} );
-```
 
 ## AVPlayer
 
