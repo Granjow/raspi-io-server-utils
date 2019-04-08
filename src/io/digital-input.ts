@@ -1,6 +1,12 @@
 const EventEmitter = require( 'events' );
 const rpio = require( 'rpio' );
 
+export enum InputMode {
+    PULLUP = 'PULLUP',
+    PULLDOWN = 'PULLDOWN',
+    OFF = 'OFF',
+}
+
 /**
  * Digital input which listens to rising edges.
  * Keeps the state until reset.
@@ -19,7 +25,7 @@ export class DigitalInput extends EventEmitter {
 
     private readonly _pin : number;
     private readonly _highIsOff : boolean;
-    private readonly _pullup : boolean;
+    private readonly _inputMode : InputMode;
     private readonly _ON : number;
     private _tEnabled : number;
     private _currentStatus : boolean;
@@ -30,23 +36,33 @@ export class DigitalInput extends EventEmitter {
      *
      * @param pin Physical pin to read
      * @param highIsOff Invert the input: low = on, high = off
-     * @param pullUp Enable pullup resistor. If false, the pulldown resistor is enabled.
+     * @param inputMode Defines which input resistors (pullup, pulldown, or none) are used.
      */
-    constructor( pin : number, highIsOff : boolean = false, pullUp : boolean = false ) {
+    constructor( pin : number, highIsOff : boolean = false, inputMode : InputMode = InputMode.OFF ) {
         super();
 
         this._pin = pin;
         this._tEnabled = undefined;
         this._highIsOff = highIsOff;
-        this._pullup = pullUp;
+        this._inputMode = inputMode;
         this._currentStatus = false;
 
         this._ON = highIsOff ? rpio.LOW : rpio.HIGH;
 
         this.reset();
 
+        let rpioInputMode = rpio.OFF;
+        switch ( inputMode ) {
+            case InputMode.PULLUP:
+                rpioInputMode = rpio.PULL_UP;
+                break;
+            case InputMode.PULLDOWN:
+                rpioInputMode = rpio.PULL_DOWN;
+                break;
+        }
+
         try {
-            rpio.open( pin, rpio.INPUT, pullUp ? rpio.PULL_UP : rpio.PULL_DOWN );
+            rpio.open( pin, rpio.INPUT, rpioInputMode );
         } catch ( e ) {
             throw new Error( `Could not open output pin ${pin}: ${e.message || e}` );
         }
@@ -67,7 +83,7 @@ export class DigitalInput extends EventEmitter {
             status: this.currentStatus,
             tEnabled: this.tEnabled,
             highIsOff: this._highIsOff,
-            pullup: this._pullup,
+            inputMode: this._inputMode,
         };
     }
 
