@@ -90,6 +90,13 @@ export class AvPlayer extends EventEmitter {
         return this._volume;
     }
 
+    /**
+     * Returns the file that is currently loaded
+     */
+    get file() : string {
+        return this._file;
+    }
+
     get status() {
         return {
             volume: this._volume,
@@ -147,7 +154,8 @@ export class AvPlayer extends EventEmitter {
         setImmediate( () => this.emit( 'stop' ) );
         if ( this._loop ) {
             console.log( 'Loop: Restarting audio file' );
-            this.play( this._file );
+            this.play( this._file )
+                .catch( ( err ) => this.emit( 'error', err ) );
         } else {
             console.log( 'Not restarting.', this._loop );
         }
