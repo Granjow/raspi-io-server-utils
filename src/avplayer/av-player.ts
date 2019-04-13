@@ -1,4 +1,4 @@
-import { AvPlayerFactory } from './av-player-factory';
+import { AvPlayerFactory, MediaPlayerName } from './av-player-factory';
 import { AbstractPlayer } from './abstract-player';
 
 const EventEmitter = require( 'events' );
@@ -41,7 +41,7 @@ export class AvPlayer extends EventEmitter {
      * @param preferredPlayers Defines the order of preferred audio/video players. The first existing is used.
      * See {@link AvPlayerFactory} for a list of valid players.
      */
-    constructor( preferredPlayers? : string[] ) {
+    constructor( preferredPlayers? : MediaPlayerName[] ) {
         super();
 
         this._factory = new AvPlayerFactory();

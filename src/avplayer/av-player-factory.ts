@@ -3,14 +3,17 @@ import { MPlayer } from './m-player';
 import { VlcPlayer } from './vlc-player';
 import { AbstractPlayer } from './abstract-player';
 
+export enum MediaPlayerName {
+    vlc = 'vlc',
+    cvlc = 'cvlc',
+    mplayer = 'mplayer',
+    omxplayer = 'omxplayer',
+}
+
 const EventEmitter = require( 'events' );
 
 /**
- * Creates an A/V player. Valid players are:
- *
- * - `vlc` or `cvlc`
- * - `omxplayer`
- * - `mplayer`
+ * Creates an A/V player.
  */
 export class AvPlayerFactory extends EventEmitter {
 
@@ -27,7 +30,7 @@ export class AvPlayerFactory extends EventEmitter {
      *
      * @param preferredOrder See #preferredOrder
      */
-    init( preferredOrder? : string[] ) : Promise<void> {
+    init( preferredOrder? : MediaPlayerName[] ) : Promise<void> {
         const name = 'AvPlayerFactory';
 
         const vlcCheck = VlcPlayer.checkAvailability().then(
@@ -67,16 +70,16 @@ export class AvPlayerFactory extends EventEmitter {
     /**
      * Define in which order players should be created.
      */
-    set preferredOrder( order : string[] ) {
+    set preferredOrder( order : MediaPlayerName[] ) {
         if ( !( order instanceof Array ) ) return;
         const factoriesInOrder = order.map( name => {
             switch ( name ) {
-                case 'mplayer':
+                case MediaPlayerName.mplayer:
                     return MPlayer;
-                case 'omxplayer':
+                case MediaPlayerName.omxplayer:
                     return OmxPlayer;
-                case 'vlc':
-                case 'cvlc':
+                case MediaPlayerName.vlc:
+                case MediaPlayerName.vlc:
                     return VlcPlayer;
                 default:
                     return undefined;
