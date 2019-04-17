@@ -35,7 +35,7 @@ export class AvPlayer extends EventEmitter {
     private _activePlayer : AbstractPlayer | undefined;
     private _file : string;
 
-    private _startedAt:number;
+    private _startedAt : number;
 
     /**
      * @param preferredPlayers Defines the order of preferred audio/video players. The first existing is used.
@@ -105,8 +105,8 @@ export class AvPlayer extends EventEmitter {
     /**
      * Returns the elapsed time in milliseconds since playback started.
      */
-    get elapsed():number{
-        return this._startedAt && (Date.now()-this._startedAt);
+    get elapsed() : number {
+        return this._startedAt && ( Date.now() - this._startedAt );
     }
 
     get status() {
@@ -159,12 +159,12 @@ export class AvPlayer extends EventEmitter {
     }
 
     private _started() {
-        this._startedAt=Date.now();
+        this._startedAt = Date.now();
         setImmediate( () => this.emit( 'start' ) );
     }
 
     private _stopped() {
-        this._startedAt=undefined;
+        this._startedAt = undefined;
         setImmediate( () => this.emit( 'stop' ) );
         if ( this._loop ) {
             console.log( 'Loop: Restarting audio file' );
@@ -176,7 +176,7 @@ export class AvPlayer extends EventEmitter {
     }
 
     _error( err : Error ) {
-        this._startedAt=undefined;
+        this._startedAt = undefined;
         setImmediate( () => this.emit( 'error', err ) );
         console.error( 'Player error: ' + err );
     }

@@ -1,16 +1,16 @@
-import { AvPlayerFactory } from '../src/avplayer/av-player-factory';
+import { AvPlayerFactory, MediaPlayerName } from '../src/avplayer/av-player-factory';
 
 const file = 'audio.mp3';
 const dur = 4000;
 
 
 const factory = new AvPlayerFactory();
-factory.init( [ 'omxplayer' ] ).then( () => {
+factory.init( [ MediaPlayerName.omxplayer ] ).then( () => {
 
     const player = factory.createPlayer( file );
     player.on( 'stop', () => {
 
-        factory.preferredOrder = [ 'mplayer' ];
+        factory.preferredOrder = [ MediaPlayerName.mplayer ];
         const player = factory.createPlayer( file );
         player.start();
         setTimeout( () => player.stop(), dur );
