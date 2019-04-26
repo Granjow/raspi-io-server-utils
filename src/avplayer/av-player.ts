@@ -47,7 +47,7 @@ export class AvPlayer extends EventEmitter {
         this._factory = new AvPlayerFactory();
         this._factory.init( preferredPlayers ).then( () => this.emit( 'ready' ) );
 
-        this._volume = 50;
+        this._volume = 100;
         this._loop = false;
         this._activePlayer = undefined;
         this._file = undefined;
