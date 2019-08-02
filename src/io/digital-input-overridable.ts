@@ -21,6 +21,17 @@ export interface ChangeEventData {
     overrideMode : boolean;
 }
 
+export interface DigitalInputOverridableStatus {
+    pin : number;
+    enabled : boolean;
+    overrideMode : boolean;
+    overrideToEnabled : boolean;
+    physicalStatus : boolean;
+    inputInversion : InputInversion;
+    pullupMode : PullupMode;
+    tEnabled : number;
+}
+
 export interface Conf {
     pin : number;
     pullupMode? : PullupMode;
@@ -80,10 +91,10 @@ export class DigitalInputOverridable {
         this._conf = mergedConf;
     }
 
-    get status() {
+    get status() : DigitalInputOverridableStatus {
         return {
             pin: this._conf.pin,
-            status: this._calculatedStatus,
+            enabled: this._calculatedStatus,
             overrideMode: this._overrideMode,
             overrideToEnabled: this._overrideToEnabled,
             physicalStatus: this._physicalStatus,
