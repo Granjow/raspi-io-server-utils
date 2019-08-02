@@ -162,4 +162,42 @@ describe( 'Digital Overridable Input', () => {
 
     } );
 
+    describe( 'Status', () => {
+        it( 'reports enabled status correctly', ( done ) => {
+
+            input = new DigitalInputOverridable( {
+                pin: 11,
+            } );
+
+            let c = 0;
+            input.onChange( ( data ) => {
+                switch ( c ) {
+                    case 0:
+                        expect( data.enabled ).toBe( true );
+                        expect( data.overrideMode ).toBe( false );
+                        break;
+                    case 1:
+                        expect( data.enabled ).toBe( false );
+                        expect( data.overrideMode ).toBe( false );
+                        break;
+                    case 2:
+                        expect( data.enabled ).toBe( true );
+                        expect( data.overrideMode ).toBe( true );
+                        done();
+                        break;
+                    default:
+                        throw new Error( 'Unhandled event' );
+                }
+                c++;
+            } );
+
+            inputSim.setPin( 11, true );
+            inputSim.setPin( 11, false );
+            input.overrideToEnabled = true;
+            input.overrideMode = true;
+
+        } );
+
+    } );
+
 } );
