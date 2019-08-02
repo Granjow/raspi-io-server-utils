@@ -2,9 +2,7 @@ const EventEmitter = require( 'events' );
 
 export abstract class AbstractPlayer extends EventEmitter {
 
-    private readonly _file : string;
     protected _volume : number;
-    private _error : Error | undefined;
 
     protected constructor( file : string ) {
         super();
@@ -77,18 +75,24 @@ export abstract class AbstractPlayer extends EventEmitter {
         return this._file;
     }
 
-    _started() {
+    protected _started() {
         this._tStart = Date.now();
         setImmediate( () => this.emit( 'start' ) );
     }
 
-    _stopped() {
+    protected _stopped() {
         this._tStop = Date.now();
         setImmediate( () => this.emit( 'stop' ) );
     }
 
-    _setError( err : Error ) {
+    protected _setError( err : Error ) {
         this._error = err;
     }
+
+    private readonly _file : string;
+
+    private _tStart : number = undefined;
+    private _tStop : number = undefined;
+    private _error : Error | undefined;
 
 }

@@ -1,4 +1,5 @@
 import { AbstractPlayer } from './abstract-player';
+import { ChildProcess } from 'child_process';
 
 const childProcess = require( 'child_process' );
 
@@ -78,5 +79,7 @@ export class VlcPlayer extends AbstractPlayer {
 
         super._stopped();
     }
+
+    private _process : ChildProcess;
 
 }
