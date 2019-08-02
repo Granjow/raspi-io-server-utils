@@ -171,7 +171,7 @@ export class AvPlayer extends EventEmitter {
             this.play( this._file )
                 .catch( ( err ) => this.emit( 'error', err ) );
         } else {
-            console.log( 'Not restarting.', this._loop );
+            console.log( `Not restarting. Loop mode ${this._loop ? 'on' : 'off'}` );
         }
     }
 
