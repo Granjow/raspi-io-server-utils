@@ -11,6 +11,7 @@
   "scripts": {
     "build": "tsc",
     "prepack": "rm -rf dist && tsc",
+    "prepublishOnly": "npm run test",
     "test": "tsc && jasmine",
     "jest": "tsc && jest"
   },
