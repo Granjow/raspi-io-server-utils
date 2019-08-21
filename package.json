@@ -1,6 +1,6 @@
 {
   "name": "raspi-io-server-utils",
-  "version": "2.0.0-3",
+  "version": "2.0.0-4",
   "description": "Utilities for interacting with Raspberry IOs and Raspbian",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
