@@ -6,8 +6,6 @@ Changes: See [CHANGELOG.md](CHANGELOG.md).
 
 ## Usage
 
-ES6 example:
-
 ```js
 // JavaScript
 const { DigitalInput, DigitalOutput } = require( 'raspi-io-server-utils' );

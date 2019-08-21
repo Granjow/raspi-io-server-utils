@@ -9,11 +9,13 @@ export interface ChangeEventData {
 
 export interface Conf {
     pin : number;
-    outputInversion : OutputInversion;
+    outputInversion? : OutputInversion;
 }
 
 export enum OutputInversion {
+    /** Default: Enabling the output sets it to HIGH (3v3 on a Raspberry). */
     OnIsHigh = 'OFF',
+    /** Inverted: Enabling the output writes a LOW (0v on a Raspberry), disabling it writes a logical HIGH (3v3). */
     OnIsLow = 'INVERT',
 }
 
@@ -22,7 +24,7 @@ enum Events {
 }
 
 /**
- * Digital output, keeps track of the state.
+ * Digital output, keeps track of the state and can be overridden.
  */
 export class DigitalOutputOverridable {
 
@@ -32,6 +34,13 @@ export class DigitalOutputOverridable {
     };
 
 
+    /**
+     * Opens a new digital output.
+     *
+     * **Note:** The output is not written yet and is therefore in unknown state until it is set.
+     *
+     * @param conf For parameters which are not required, the default parameters from #defaultConf are used.
+     */
     constructor( conf : Conf ) {
 
         const mergedConf = Object.assign( {}, DigitalOutputOverridable.defaultConf, conf );
@@ -57,6 +66,10 @@ export class DigitalOutputOverridable {
         }
     }
 
+    /**
+     * Returns true if the output is enabled.
+     * This is the logical state
+     */
     get enabled() : boolean {
         return this._calculatedEnabled;
     }

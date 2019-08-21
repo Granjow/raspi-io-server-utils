@@ -1,14 +1,13 @@
 # Changelog
 
 
-### Todo
-
-* on(…) events with enums
-
 ### 2.0 (upcoming)
 
-* Add new DigitalInputOverridable class which allows to manually override the input value
+Overridable IOs with typed `onChange` event subscription methods:
+
+* Add new `DigitalInputOverridable` class which allows to manually override the input value
   that is returned (also affects emitted events).
+* Add new `DigitalOutputOverridable` class
 
 ### 1.2
 

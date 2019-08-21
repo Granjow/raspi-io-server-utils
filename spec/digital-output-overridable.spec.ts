@@ -21,6 +21,12 @@ describe( 'Digital overridable output', () => {
         expect( output.enabled ).not.toBeDefined();
     } );
 
+    it( 'uses uninverted outputs by default', () => {
+        const defOut = new DigitalOutputOverridable( { pin: 11 } );
+        defOut.enabled = true;
+        expect( defOut.lastWrittenRpioState ).toBe( rpio.HIGH );
+    } );
+
     it( 'is enabled after enabling', () => {
         output.enabled = true;
         expect( output.enabled ).toBe( true );
