@@ -30,8 +30,8 @@
     "gpio"
   ],
   "dependencies": {
-    "check-types": "^7.4.0",
-    "rpio": "^1.0.12"
+    "check-types": "^11.1.2",
+    "rpio": "^2.2.0"
   },
   "devDependencies": {
     "@types/jasmine": "^3.3.8",
